@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
-    <http:listener-config name="retrievetravelontiproutesandschedulesysapi-httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="8081" />
-    </http:listener-config>
-    <apikit:config name="retrievetravelontiproutesandschedulesysapi-config" api="resource::da57e5d5-9c58-490e-bd57-4e47d7f8c3e3:retrievetravelontiproutesandschedulesysapi:1.0.0:raml:zip:retrievetravelontiproutesandschedulesysapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
     <flow name="retrievetravelontiproutesandschedulesysapi-main">
         <http:listener config-ref="retrievetravelontiproutesandschedulesysapi-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -123,78 +120,28 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:\(transportType)\(transportCompany)\routes:retrievetravelontiproutesandschedulesysapi-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+    <sub-flow name="retrievetravelontiproutesandschedulesysapiSub_Flow" doc:id="418aeac6-9688-408c-a59b-8e01fd8020e7" >
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
             <ee:variables>
-                <ee:set-variable variableName="transportType">attributes.uriParams.'transportType'</ee:set-variable>
-                <ee:set-variable variableName="transportCompany">attributes.uriParams.'transportCompany'</ee:set-variable>
+                <ee:set-variable variableName="transportType"><![CDATA[attributes.uriParams.'transportType']]></ee:set-variable>
+                <ee:set-variable variableName="transportCompany"><![CDATA[attributes.uriParams.'transportCompany']]></ee:set-variable>
+				<ee:set-variable variableName="transactionId" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.headers.transactionId]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-[
-  {
-    originLocation: {
-      locationCode: "BEN-SG"
-    },
-    destinationLocation: {
-      locationCode: "KLG-MY"
-    }
-  }, 
-  {
-    originLocation: {
-      locationCode: "BEN-SG"
-    },
-    destinationLocation: {
-      locationCode: "KLG-MY"
-    }
-  }
-]]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+	</sub-flow>
+	<flow name="get:\(transportType)\(transportCompany)\routes:retrievetravelontiproutesandschedulesysapi-config">
+		<flow-ref doc:name="Flow Reference" doc:id="e137f3f6-8a5a-4dda-a9bb-24e2a07588fd" name="retrievetravelontiproutesandschedulesysapiSub_Flow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="eae10ab3-446a-4183-94d4-500ef5c24aad" message="Request recieved for Routes TravelonTip Sys API For TransactionId: #[vars.transactionId]"/>
+		<flow-ref doc:name="Flow Reference" doc:id="ec05ab21-f087-4d8e-a936-25d48d2773cc" name="TravelOnTip-GetRoutes-ImplementationSub_Flow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="477e0dfc-7c51-4eb3-8003-f2e83403020f" message="Response Sent for Routes TravelonTip Sys API For TransactionId: #[vars.transactionId]"/>
     </flow>
     <flow name="get:\(transportType)\(transportCompany)\schedules:retrievetravelontiproutesandschedulesysapi-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
-            <ee:variables>
-                <ee:set-variable variableName="transportType">attributes.uriParams.'transportType'</ee:set-variable>
-                <ee:set-variable variableName="transportCompany">attributes.uriParams.'transportCompany'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-[
-  {
-    availableSeats: 20,
-    departureDateTime: "2019-04-30T16:41:41.090Z",
-    travelRoute: {
-      destinationLocation: {
-        locationCode: "KLG-MY"
-      },
-      originLocation: {
-        locationCode: "BEN-SG"
-      }
-    }
-  }, 
-  {
-    availableSeats: 30,
-    departureDateTime: "2019-04-30T16:41:41.090Z",
-    travelRoute: {
-      destinationLocation: {
-        locationCode: "KLG-MY"
-      },
-      originLocation: {
-        locationCode: "BL-SG"
-      }
-    }
-  }
-]]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+        <flow-ref doc:name="Flow Reference" doc:id="f6a8a5a6-af23-4e89-a247-ae1ae3b6de7b" name="retrievetravelontiproutesandschedulesysapiSub_Flow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="f7f2eed4-ca38-41a0-baf3-a71b410f54e0" message="Request recieved for Schedules TravelonTip Sys API For TransactionId: #[vars.transactionId]"/>
+		<flow-ref doc:name="Flow Reference" doc:id="f1206abb-ea26-4956-8e24-f5382d0232f8" name="TravelOnTip-GetSchedules-ImplementationSub_Flow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="44b4f805-5192-4302-8cfa-50cdae6ab57d" message="Response Sent for Schedules TravelonTip Sys API For TransactionId: #[vars.transactionId]"/>
     </flow>
 </mule>
