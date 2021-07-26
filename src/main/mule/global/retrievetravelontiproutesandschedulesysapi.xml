@@ -12,7 +12,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
             </http:error-response>
         </http:listener>
         <apikit:router config-ref="retrievetravelontiproutesandschedulesysapi-config" />
-        <error-handler ref="globalErrorHandlerError_Handler">
+        <error-handler ref="travelOnTripglobalErrorHandlerError_Handler">
             
 			
         </error-handler>
@@ -28,7 +28,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
             </http:error-response>
         </http:listener>
         <apikit:console config-ref="retrievetravelontiproutesandschedulesysapi-config" />
-		<error-handler ref="globalErrorHandlerError_Handler" />
+		<error-handler ref="travelOnTripglobalErrorHandlerError_Handler" />
     </flow>
     <sub-flow name="retrievetravelontiproutesandschedulesysapiSub_Flow" doc:id="418aeac6-9688-408c-a59b-8e01fd8020e7" >
 		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">

@@ -5,7 +5,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
-	<error-handler name="globalErrorHandlerError_Handler" doc:id="8fff7505-cda3-46d6-88dd-629288e3b90e" >
+	<error-handler name="travelOnTripglobalErrorHandlerError_Handler" doc:id="8fff7505-cda3-46d6-88dd-629288e3b90e" >
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="baf00ff6-d0c0-49e6-b5e7-9628250110d8" type="HTTP:CONNECTIVITY">
 				<ee:transform doc:name="Transform Message" doc:id="43002081-183e-4a9d-add4-c8b4caa48b6e">
 					<ee:message>
@@ -96,6 +96,19 @@ output application/json
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="ec5f58cb-9c6e-45a5-bb37-1819087021f7" type="HTTP:INTERNAL_SERVER_ERROR" >
+			<ee:transform doc:name="Transform Message" doc:id="42f51aa6-410f-4db2-825e-c16552bf01ca" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Http Internal Server Error"}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate>
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="7c107862-d66c-42e4-8904-a215530158ce" type="ANY">
 				<ee:transform doc:name="Transform Message" doc:id="654bc4e8-7fac-45a0-a2ee-18f4e6b6efd6">
 					<ee:message>
@@ -109,18 +122,5 @@ output application/json
 					</ee:variables>
 				</ee:transform>
 			</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="7d566286-8137-4387-9dd5-a72ea6131dcc" type="HTTP: INTERNAL_SERVER_ERROR">
-			<ee:transform doc:name="Transform Message" doc:id="47c3ba25-be17-4b6f-b1ce-48cd94069f00" >
-				<ee:message >
-					<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{message: "Http Internal Server Error"}]]></ee:set-payload>
-				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
-		</on-error-propagate>
 	</error-handler>
 </mule>
